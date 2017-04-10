@@ -32,4 +32,6 @@ void pioche_melange(Pioche& pioche) ;
 //necessaire d'appeler a nouveau init pour que la pioche puisse etre utilisee.
 void pioche_suppr(Pioche& pioche) ;
 
+//retourne le nombre de cartes dans la pioche
+int nbr_cartes_dans_pioche(Pioche& pioche);
 #endif

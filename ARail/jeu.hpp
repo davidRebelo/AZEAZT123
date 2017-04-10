@@ -24,7 +24,9 @@ enum ActionType {
   DEFAUSSE_CARTE,
   PIOCHE_OBJECTIF,
   DEFAUSSE_OBJECTIF,
-  PRENDRE_LIAISON
+  PRENDRE_LIAISON,
+  DEBUT_TOUR,
+  DEBUT_TOUR_JOUEUR
 } ;
 
 struct Action {
@@ -58,6 +60,10 @@ struct Jeu {
   //historique
   std::vector<Action> actions ;
 } ;
+
+//AJOUT PAR ETUDIANTS
+void jeu_nouveau_tour(Jeu& jeu, int joueur, int tour);
+void jeu_nouveau_tour_joueur(Jeu& jeu, int joueur, int tour);
 
 //initialisation et destruction de la partie
 
@@ -141,7 +147,7 @@ Carte jeu_carte_visible(const Jeu& jeu, int index) ;
 
 /* pioche d'une carte
  *   - joueur et mdp sont les parametres du joueur
- *   - la valeur de retour est non predictibles si les parametres du joueur 
+ *   - la valeur de retour est non predictibles si les parametres du joueur
  *     sont mauvais
  */
 Carte jeu_pioche_cache(Jeu& jeu, int joueur, int mdp) ;
@@ -149,7 +155,7 @@ Carte jeu_pioche_cache(Jeu& jeu, int joueur, int mdp) ;
 /* pioche d'une carte visible
  *   - index est l'index de la carte
  *   - joueur et mdp sont les parametres du joueur
- *   - la valeur de retour est non predictibles si les parametres du joueur 
+ *   - la valeur de retour est non predictibles si les parametres du joueur
  *     sont mauvais
  */
 Carte jeu_pioche_visible(Jeu&, int index, int joueur, int mdp) ;
@@ -173,7 +179,7 @@ Objectif jeu_info_objectif(const Jeu& jeu, int index) ;
 
 /* pioche d'un objectif
  *   - joueur et mdp sont les parametres du joueur
- *   - la valeur de retour est non predictibles si les parametres du joueur 
+ *   - la valeur de retour est non predictibles si les parametres du joueur
  *     sont mauvais
  */
 Objectif jeu_pioche_objectif(Jeu& jeu, int joueur, int mdp) ;

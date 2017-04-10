@@ -1,6 +1,6 @@
 CXX      = g++
 
-SOURCES = pioche.cpp jeu.cpp jeu_io.cpp joueur_simple.cpp gestion_chemin.cpp joueur_organise.cpp
+SOURCES = pioche.cpp jeu.cpp jeu_io.cpp joueur_simple.cpp gestion_chemin.cpp joueur_organise.cpp joueur_opportuniste.cpp
 HEADERS = $(SOURCES:.cpp=.hpp)
 OBJECTS = $(SOURCES:.cpp=.o)
 

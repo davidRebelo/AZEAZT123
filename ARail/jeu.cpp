@@ -3,6 +3,10 @@
 #include <algorithm>
 #include <iostream>
 
+#define BLEU 0
+#define VERT 1
+#define ORANGE 2
+
 //initialisation et destruction de la partie
 
 void jeu_init(Jeu& jeu) {
@@ -21,6 +25,8 @@ void jeu_init(Jeu& jeu) {
   //ajout d'un joueur fictif car 0 => pas de joueur
   jeu.joueurs.push_back(0) ;
 }
+
+
 
 void jeu_suppr(Jeu& jeu) {
   //liberation de la memoire occupee par les pioches
@@ -108,8 +114,8 @@ liaison_it ville_end(Jeu& jeu, int ville) {
 
 //verification de l'identite du joueur
 static bool joueur_check(const Jeu& jeu, int joueur, int mdp) {
-  return joueur > 0 
-    && joueur < (int) jeu.joueurs.size() 
+  return joueur > 0
+    && joueur < (int) jeu.joueurs.size()
     && jeu.joueurs[joueur] == mdp ;
 }
 
@@ -140,7 +146,7 @@ void jeu_debut_partie(Jeu& jeu) {
   //probablement une perte de temps pour 5-6 liaisons par ville.
   for(unsigned int i = 0; i < jeu.index_ville.size(); ++i) {
     std::sort(
-        ville_begin(jeu, i), 
+        ville_begin(jeu, i),
         ville_end(jeu, i),
         [](const Liaison& l1, const Liaison& l2) {
           return l1.ville2 < l2.ville2 ;
@@ -258,7 +264,7 @@ Carte jeu_pioche_cache(Jeu& jeu, int joueur, int mdp) {
   if(!joueur_check(jeu, joueur, mdp)) return carte;
   //pioche
   pioche_pioche(jeu.cartes, &carte) ;
-  log(jeu, PIOCHE_CACHE, joueur, -2, -2) ;
+  log(jeu, PIOCHE_CACHE, joueur, carte.couleur, -2) ;
   return carte ;
 }
 
@@ -302,7 +308,7 @@ Objectif jeu_pioche_objectif(Jeu& jeu, int joueur, int mdp) {
   if(!joueur_check(jeu, joueur, mdp)) return objectif;
   //pioche
   pioche_pioche(jeu.objectifs, &objectif) ;
-  log(jeu, PIOCHE_OBJECTIF, joueur, -2, -2) ;
+  log(jeu, PIOCHE_OBJECTIF, joueur, objectif.ville1, objectif.ville2) ;
   return objectif ;
 }
 
@@ -312,6 +318,14 @@ void jeu_defausse_objectif(Jeu& jeu, const Objectif& objectif, int joueur, int m
   //defausse
   pioche_defausse(jeu.objectifs, &objectif) ;
   log(jeu, DEFAUSSE_OBJECTIF, joueur, -2, -2) ;
+}
+
+void jeu_nouveau_tour(Jeu& jeu, int joueur, int tour) {
+  log(jeu, DEBUT_TOUR, joueur, tour, -2) ;
+}
+
+void jeu_nouveau_tour_joueur(Jeu& jeu, int joueur, int tour) {
+  log(jeu, DEBUT_TOUR_JOUEUR, joueur, tour, -2) ;
 }
 
 ////historique
@@ -326,37 +340,59 @@ Action jeu_action(const Jeu& jeu, int index) {
 
 void action_affiche(const Jeu& jeu, const Action& action) {
   switch(action.type) {
-    case PIOCHE_VISIBLE : 
+    case PIOCHE_VISIBLE :
       {
-        std::cout << "pioche visible de " << jeu_nom_couleur(jeu, action.info[0]) 
+        std::cout << "pioche visible de " << jeu_nom_couleur(jeu, action.info[0])
                   << " par " << action.joueur << std::endl ;
         break ;
       }
-    case PIOCHE_CACHE : 
+    case PIOCHE_CACHE :
       {
-        std::cout << "pioche cachée par " << action.joueur << std::endl ;
+        std::cout << "pioche cachée par " << action.joueur << " couleur: ";
+        switch(action.info[0]){
+            case BLEU:
+                std::cout << "bleu" << std::endl ;
+                break;
+            case VERT:
+                std::cout << "vert" << std::endl ;
+                break;
+            case ORANGE:
+                std::cout << "orange" << std::endl ;
+                break;
+        }
         break ;
       }
-    case DEFAUSSE_CARTE : 
+    case DEFAUSSE_CARTE :
       {
         std::cout << "défausse par " << action.joueur << std::endl ;
         break ;
       }
-    case PIOCHE_OBJECTIF : 
+    case PIOCHE_OBJECTIF :
       {
-        std::cout << "pioche d'objectif par " << action.joueur << std::endl ;
+        std::cout << "pioche d'objectif par " << action.joueur << "ville1: " << action.info[0] << " ville2: " << action.info[1] << std::endl ;
+
         break ;
       }
-    case DEFAUSSE_OBJECTIF : 
+    case DEFAUSSE_OBJECTIF :
       {
         std::cout << "défausse d'objectif par " << action.joueur << std::endl ;
         break ;
       }
-    case PRENDRE_LIAISON : 
+    case PRENDRE_LIAISON :
       {
         std::cout << "prise de la liaison entre " << jeu_nom_ville(jeu,action.info[0])
                   << " et " << jeu_nom_ville(jeu,action.info[1])
                   << " par " << action.joueur << std::endl ;
+        break ;
+      }
+    case DEBUT_TOUR :
+      {
+        std::cout << std::endl << "DEBUT DU TOUR " << action.info[0] << std::endl ;
+        break ;
+      }
+    case DEBUT_TOUR_JOUEUR :
+      {
+        std::cout << "JOUEUR " << action.joueur << std::endl;
         break ;
       }
   }
